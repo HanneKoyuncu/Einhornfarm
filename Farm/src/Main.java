@@ -1,25 +1,23 @@
 
 import javax.swing.*;
-
+import java.net.URL;
 
 public class Main {
-    public static void main(String[] args){
-        JFrame window = new JFrame();
-        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        window.setResizable(false);
-        window.setTitle("Einhornfarm");
-        SplashScreen intro= new SplashScreen("images/bg/parallax-mountain-bg.png");
-        intro.showFor(3000);
-        System.exit(0);
+
+    public static void main(String[] args) {
+
+        SwingUtilities.invokeLater(() -> {
 
 
-        GamePanel gamePanel=new GamePanel();
-        window.add(gamePanel);
-        window.pack();
+            JFrame window = new JFrame("Einhornfarm");
+            window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            window.setResizable(true);
 
-        window.setLocationRelativeTo(null);
-        window.setVisible(true);
-
+            GamePanel gamePanel = new GamePanel(window);
+            window.add(gamePanel);
+            window.pack();                 // nutzt PreferredSize
+            window.setLocationRelativeTo(null);
+            window.setVisible(true);
+        });
     }
 }
-//TIP To <b>Run</b> code, press <shortcut acti
