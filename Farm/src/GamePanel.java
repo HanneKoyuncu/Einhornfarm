@@ -40,7 +40,6 @@ public class GamePanel extends JPanel {
         optionsBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
         exitBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // optional: transparenter Look
         startBtn.setFocusPainted(false);
         optionsBtn.setFocusPainted(false);
         exitBtn.setFocusPainted(false);
@@ -52,12 +51,11 @@ public class GamePanel extends JPanel {
         add(Box.createRigidArea(new Dimension(0, 10)));
         add(exitBtn);
         add(Box.createVerticalGlue());
-// ActionListener hinzufügen
         startBtn.addActionListener(e -> {
 
 
             JFrame gameWindow = new JFrame("Einhornfarm");
-            gameWindow.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // schließt nur dieses Fenster
+            gameWindow.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); 
             gameWindow.setSize(800, 600);
             gameWindow.setLocationRelativeTo(null);
 
@@ -69,7 +67,7 @@ public class GamePanel extends JPanel {
 
             add(playPanel, BorderLayout.NORTH);
             backBtn.addActionListener(l -> {
-                // Menü oder anderes Panel wieder anzeigen
+                
                 parentFrame.getContentPane().removeAll();
                 parentFrame.getContentPane().add(new GamePanel(parentFrame));
                 parentFrame.revalidate();
@@ -79,7 +77,7 @@ public class GamePanel extends JPanel {
 
             playPanel.setBackground(Color.DARK_GRAY);
             gameWindow.add(playPanel);
-            gameWindow.pack();                 // nutzt PreferredSize
+            gameWindow.pack();                 
             gameWindow.setLocationRelativeTo(null);
 
 
@@ -94,7 +92,7 @@ public class GamePanel extends JPanel {
         optionsBtn.addActionListener(e -> {
 
             JFrame gameWindow = new JFrame("Optionen");
-            gameWindow.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // schließt nur dieses Fenster
+            gameWindow.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); 
             gameWindow.setSize(800, 600);
             gameWindow.setLocationRelativeTo(null);
 
@@ -114,7 +112,6 @@ public class GamePanel extends JPanel {
     }
     public void addBackButton() {
         JButton backBtn = new JButton("Back");
-        // Panel nur für Back-Button oben rechts
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         topPanel.setOpaque(false);
         topPanel.add(backBtn);
@@ -122,7 +119,6 @@ public class GamePanel extends JPanel {
         add(topPanel, BorderLayout.NORTH);
 
         backBtn.addActionListener(e -> {
-            // Menü oder anderes Panel wieder anzeigen
             parentFrame.getContentPane().removeAll();
             parentFrame.getContentPane().add(new GamePanel(parentFrame));
             parentFrame.revalidate();
