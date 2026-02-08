@@ -16,13 +16,13 @@ public class GamePanel extends JPanel {
     private JPanel topPanel;
     private JPanel stallContainer;
 
+    //GamePanel wird erstellt und angezeigt
     public GamePanel(Farm farm) {
         this.farm = farm;
         this.ausgewaehlt = new List<>();
 
         setLayout(new BorderLayout());
 
-        // ===== TOP PANEL =====
         topPanel = new JPanel(new BorderLayout());
 
         infoLabel = new JLabel("Wähle Einhörner für Aktionen", SwingConstants.CENTER);
@@ -68,7 +68,6 @@ public class GamePanel extends JPanel {
 
         add(actionPanel, BorderLayout.CENTER);
 
-        // ===== STÄLLE =====
         stallContainer = new JPanel();
         stallContainer.setLayout(new BoxLayout(stallContainer, BoxLayout.Y_AXIS));
 
