@@ -1,33 +1,92 @@
-import java.util.ArrayList;
-import java.util.List;
+import abitur.Queue;
 
 public class Stall {
 
-    private int maxCapacity;
-    private List<Einhorn> einhorner;
+    private Queue<Einhorn> einhorner;
+    private int anzahl;
+    private static final int MAX = 10;
+    private int nummer; // Nummer des Stalls, praktisch für Anzeige
 
-    public Stall(int maxCapacity) {
-        this.maxCapacity = maxCapacity;
-        this.einhorner = new ArrayList<>();
+    public Stall(int nummer) {
+        this.nummer = nummer;
+        einhorner = new Queue<>();
+        anzahl = 0;
     }
 
-    public boolean addEinhorn(Einhorn e) {
-        if (einhorner.size() >= maxCapacity) {
-            return false;
-        }
-        einhorner.add(e);
-        return true;
-    }
-
-    public void removeEinhorn(Einhorn e) {
-        einhorner.remove(e); // Spieler wählt selbst
-    }
-
-    public List<Einhorn> getEinhorner() {
+    public Queue<Einhorn> getEinhorner() {
         return einhorner;
     }
 
-    public boolean isFull() {
-        return einhorner.size() >= maxCapacity;
+    public int getNummer() {
+        return nummer;
     }
+
+    public void setNummer(int nummer) {
+        this.nummer = nummer;
+    }
+
+    public boolean istVoll() {
+        return anzahl >= MAX;
+    }
+
+    // Fügt ein Einhorn hinzu, wenn Platz ist
+    public boolean einfuegen(Einhorn e) {
+        if (istVoll()) return false;
+
+        einhorner.enqueue(e);
+        anzahl++;
+        return true;
+    }
+
+    // Entfernt ein bestimmtes Einhorn
+    public boolean entferne(Einhorn ziel) {
+        Queue<Einhorn> temp = new Queue<>();
+        boolean gefunden = false;
+
+        while (!einhorner.isEmpty()) {
+            Einhorn e = einhorner.front();
+            einhorner.dequeue();
+
+            if (!gefunden && e == ziel) {
+                gefunden = true;
+                anzahl--;
+            } else {
+                temp.enqueue(e);
+            }
+        }
+
+        // Queue wiederherstellen
+        while (!temp.isEmpty()) {
+            einhorner.enqueue(temp.front());
+            temp.dequeue();
+        }
+
+        return gefunden;
+    }
+
+    // Hilfsmethode: alle Einhörner durchlaufen, ohne Queue zu zerstören
+    public Queue<Einhorn> getEinhornerKopie() {
+        Queue<Einhorn> temp = new Queue<>();
+        Queue<Einhorn> kopie = new Queue<>();
+
+        while (!einhorner.isEmpty()) {
+            Einhorn e = einhorner.front();
+            einhorner.dequeue();
+            temp.enqueue(e);
+            kopie.enqueue(e);
+        }
+
+        // Original-Queue wiederherstellen
+        while (!temp.isEmpty()) {
+            einhorner.enqueue(temp.front());
+            temp.dequeue();
+        }
+
+        return kopie;
+    }
+
+    public int getAnzahl() {
+        return anzahl;
+    }
+
 }
