@@ -1,0 +1,186 @@
+classDiagram
+       class GamePanel {
+        -Farm farm
+        -List~Einhorn~ ausgewaehlt
+        -JLabel infoLabel
+        -JLabel coinsLabel
+        -JLabel coinsChangeLabel
+        -JPanel topPanel
+        -JPanel stallContainer
+        +GamePanel(Farm farm)
+        -void updateAnzeige()
+        -void kaufeEinhorn(Attribute a)
+        -JPanel erstelleStallPanel(Stall stall, int nr)
+        -void einhornAuswaehlen(Einhorn e)
+        -void zuechten()
+        -void verkaufen()
+        -void bewegen()
+        -void oeffneShop()
+        -void zeigeInventar()
+        -void zeigeCoinsChange(int betrag)
+        -Stall findeStallVonEinhorn(Einhorn e)
+        -boolean listeHat(List~String~ l, String k)
+        -int anzahl(List<?> l)
+        -void starteTutorial()
+    }
+       class StartPanel {
+        -JFrame window
+        +StartPanel(JFrame window)
+        -void startGame()
+    }
+
+     class Main {
+        +static void main(String[] args)
+    }
+
+    class JFrame {
+        +setDefaultCloseOperation(int)
+        +add(Component c)
+        +pack()
+        +setLocationRelativeTo(Component c)
+        +setVisible(boolean)
+    }
+
+     class Farm {
+        -Stack~Einhorn~ Einhornhandbuch
+        -List~Stall~ staelle
+        -int coins
+        -int[] stallPreise
+        +Farm(String name)
+        +int[] getStallPreise()
+        +int getNaechsterStallPreis()
+        +void addCoins(int coins)
+        +boolean kaufeStall()
+        +Stack~Einhorn~ getEinhornhandbuch()
+        +List~Stall~ getStaelle()
+        +int getCoins()
+        -int naechsteStallNummer()
+    }
+
+
+    class Stall {
+        -Queue~Einhorn~ einhorner
+        -int anzahl
+        -static final int MAX = 10
+        -int nummer
+        +Stall(int nummer)
+        +Queue~Einhorn~ getEinhorner()
+        +int getNummer()
+        +void setNummer(int nummer)
+        +boolean istVoll()
+        +boolean einfuegen(Einhorn e)
+        +boolean entferne(Einhorn ziel)
+        +int getAnzahl()
+    }
+
+
+    class Stack~T~ {
+        <<generic>>
+        +void push(T element)
+        +T pop()
+        +boolean isEmpty()
+    }
+
+    class List~T~ {
+        <<generic>>
+        +void append(T element)
+        +void toFirst()
+        +void next()
+        +boolean hasAccess()
+    }
+
+
+    class Stall {
+        -Queue~Einhorn~ einhorner
+        +einfuegen(Einhorn)
+        +entferne(Einhorn)
+        +istVoll()
+    }
+
+    class Einhorn {
+        -Attribute attribut
+        -Seltenheit seltenheit
+        +getAttribut()
+        +getSeltenheit
+        }
+
+    class Attribute {
+        <<enum>>
+        +FEUER
+        +WASSER
+        +ERDE
+        +LUFT
+        +LICHT
+        +DUNKEL
+        +BLITZ
+        +LAVA
+        +STAUB
+        +DAMPF
+        +SCHNEE
+        +METALL
+        +STURM
+        +MAGNA
+        +TSUNAMI
+        +GEIST
+        +SOLAR
+        +ENERGIE
+        +TITAN
+
+        -Seltenheit seltenheit
+        -static Attribute[][] kombinationen
+        -static Random zufall
+
+        +Attribute(Seltenheit)
+        +Seltenheit getSeltenheit()
+        +static Attribute kombiniere(Attribute a, Attribute b)
+        -static void setKombination(Attribute a, Attribute b, Attribute result)
+    }
+
+    class Seltenheit {
+        <<enum>>
+        +GEWÖHNLICH
+        +SELTEN
+        +EPISCH
+        +LEGENDÄR
+
+        -int wert
+        +Seltenheit(int wert)
+        +int getWert()
+    }
+     class Tutorial {
+        -List~String~ schritte
+        -int index
+        +Tutorial()
+        +String naechsterSchritt()
+        +boolean hatMehrSchritte()
+        -int anzahl()
+    }
+
+    Main --> JFrame : zeigt
+    Main --> StartPanel : zeigt
+
+    StartPanel --> JFrame : hält Referenz
+    StartPanel --> Farm : erstellt beim Start
+    StartPanel --> GamePanel : erstellt beim Start
+
+    GamePanel --> Farm : verwendet
+    GamePanel --> Stall : verwaltet
+    GamePanel --> Einhorn : verwaltet
+    GamePanel --> Attribute : verwendet für Kauf/Zucht
+    GamePanel --> Seltenheit : verwendet für Kauf/Zucht
+    GamePanel --> Queue~Einhorn~ : temporär für Anzeige
+    GamePanel --> List~Einhorn~ : ausgewählte Einhörner
+    GamePanel --> Tutorial : startet Tutorial
+
+    Farm --> Stall : enthält
+    Farm --> Stack~Einhorn~ : Einhornhandbuch
+
+    Stall --> Einhorn : enthält
+    Stall --> Queue~Einhorn~ : verwendet zur Speicherung
+
+    Einhorn --> Attribute : hat ein
+    Einhorn --> Seltenheit :hat eine
+
+    Attribute --> Seltenheit : hat eine
+
+    Tutorial --> List~String~ : enthält Schritte

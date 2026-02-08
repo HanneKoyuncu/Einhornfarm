@@ -13,7 +13,7 @@ public class StartPanel extends JPanel {
 
         add(startBtn);
     }
-
+//Spiel wird gestartet, Farm wird erstellt und benannt
     private void startGame() {
 
         String farmName = JOptionPane.showInputDialog(
@@ -25,10 +25,9 @@ public class StartPanel extends JPanel {
             farmName = "Meine Farm";
         }
 
-        // ✅ Farm wird JETZT erstellt
+
         Farm farm = new Farm(farmName);
 
-        // Wechsel zum GamePanel
         GamePanel gamePanel = new GamePanel(farm);
 
         window.getContentPane().removeAll();

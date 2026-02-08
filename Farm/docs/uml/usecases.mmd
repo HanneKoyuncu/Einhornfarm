@@ -1,0 +1,22 @@
+flowchart LR
+    Spieler([Spieler / Nutzer]) --> Menue{Hauptmenü / GamePanel}
+
+    %% Haupt-Use Cases
+    Menue --> UC1[Stall kaufen]
+    Menue --> UC2[Einhorn kaufen]
+    Menue --> UC3[Einhorn auswählen]
+    Menue --> UC4[Züchten]
+    Menue --> UC5[Verkaufen]
+    Menue --> UC6[Bewegen]
+    Menue --> UC7[Inventar anzeigen]
+    Menue --> UC8[Tutorial starten]
+
+    %% Ergebnisse / Anzeigen
+    UC1 --> Ergebnis1[Farm aktualisiert / Coins reduziert]
+    UC2 --> Ergebnis2[Neues Einhorn im Stall / Coins reduziert]
+    UC3 --> Ergebnis3[Einhorn als ausgewählt markiert]
+    UC4 --> Ergebnis4[Neues Einhorn geboren / Stall aktualisiert]
+    UC5 --> Ergebnis5[Coins erhöht / Stall aktualisiert]
+    UC6 --> Ergebnis6[Einhorn bewegt / Ställe aktualisiert]
+    UC7 --> Ergebnis7[Inventar-Fenster mit Einhörnern]
+    UC8 --> Ergebnis8[Tutorial-Fenster mit Schritttext]

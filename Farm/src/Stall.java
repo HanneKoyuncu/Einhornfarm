@@ -5,7 +5,7 @@ public class Stall {
     private Queue<Einhorn> einhorner;
     private int anzahl;
     private static final int MAX = 10;
-    private int nummer; // Nummer des Stalls, praktisch für Anzeige
+    private int nummer;
 
     public Stall(int nummer) {
         this.nummer = nummer;
@@ -29,7 +29,7 @@ public class Stall {
         return anzahl >= MAX;
     }
 
-    // Fügt ein Einhorn hinzu, wenn Platz ist
+    // Einhorn wird hinzugefügt
     public boolean einfuegen(Einhorn e) {
         if (istVoll()) return false;
 
@@ -38,7 +38,7 @@ public class Stall {
         return true;
     }
 
-    // Entfernt ein bestimmtes Einhorn
+    // Einhorn wird entfernt
     public boolean entferne(Einhorn ziel) {
         Queue<Einhorn> temp = new Queue<>();
         boolean gefunden = false;
@@ -62,27 +62,6 @@ public class Stall {
         }
 
         return gefunden;
-    }
-
-    // Hilfsmethode: alle Einhörner durchlaufen, ohne Queue zu zerstören
-    public Queue<Einhorn> getEinhornerKopie() {
-        Queue<Einhorn> temp = new Queue<>();
-        Queue<Einhorn> kopie = new Queue<>();
-
-        while (!einhorner.isEmpty()) {
-            Einhorn e = einhorner.front();
-            einhorner.dequeue();
-            temp.enqueue(e);
-            kopie.enqueue(e);
-        }
-
-        // Original-Queue wiederherstellen
-        while (!temp.isEmpty()) {
-            einhorner.enqueue(temp.front());
-            temp.dequeue();
-        }
-
-        return kopie;
     }
 
     public int getAnzahl() {

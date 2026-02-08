@@ -34,7 +34,7 @@ public class GamePanel extends JPanel {
         coinsPanel.add(coinsLabel);
         coinsPanel.add(coinsChangeLabel);
 
-        JButton inventarBtn = new JButton("Inventar");
+        JButton inventarBtn = new JButton("Einhornhandbuch");
         inventarBtn.addActionListener(e -> zeigeInventar());
 
         JButton shopBtn = new JButton("Shop");
@@ -50,7 +50,7 @@ public class GamePanel extends JPanel {
 
         add(topPanel, BorderLayout.NORTH);
 
-        // ===== ACTION BUTTONS =====
+
         JPanel actionPanel = new JPanel(new FlowLayout());
 
         JButton zuechtenBtn = new JButton("Züchten");
@@ -78,7 +78,7 @@ public class GamePanel extends JPanel {
         starteTutorial();
     }
 
-    // ================= ANZEIGE =================
+//Anzeige wird aktualisiert
     private void updateAnzeige() {
         stallContainer.removeAll();
 
@@ -96,7 +96,7 @@ public class GamePanel extends JPanel {
         repaint();
     }
 
-    // ================= EINHORN KAUF =================
+//Methode um ein Einhorn zu kaufen
     private void kaufeEinhorn(Attribute a) {
         int preis = a.getSeltenheit().getWert();
 
@@ -152,7 +152,7 @@ public class GamePanel extends JPanel {
         f.setVisible(true);
     }
 
-    // ================= STALL PANEL =================
+//Jpanel für einen Stall
     private JPanel erstelleStallPanel(Stall stall, int nr) {
         JPanel panel = new JPanel(new FlowLayout());
         panel.setBorder(BorderFactory.createTitledBorder(
@@ -179,9 +179,9 @@ public class GamePanel extends JPanel {
         return panel;
     }
 
-    // ================= EINHORN AUSWAHL =================
+//Methode um Einhörner auszuwählen
     private void einhornAuswaehlen(Einhorn e) {
-        // Toggle-Logik
+
         ausgewaehlt.toFirst();
         while (ausgewaehlt.hasAccess()) {
             if (ausgewaehlt.getContent() == e) {
@@ -193,7 +193,7 @@ public class GamePanel extends JPanel {
             ausgewaehlt.next();
         }
 
-        // Maximal 2 nur für Zucht
+
         if (anzahl(ausgewaehlt) >= 2) {
             infoLabel.setText("Maximal zwei Einhörner zum Züchten auswählbar");
             infoLabel.setForeground(Color.BLACK);
@@ -205,7 +205,7 @@ public class GamePanel extends JPanel {
         infoLabel.setForeground(Color.BLACK);
     }
 
-    // ================= ZUCHT =================
+//Methode zum Züchten von Einhörnern
     private void zuechten() {
         if (anzahl(ausgewaehlt) != 2) {
             infoLabel.setText("Wähle genau zwei Einhörner");
@@ -234,7 +234,7 @@ public class GamePanel extends JPanel {
         updateAnzeige();
     }
 
-    // ================= VERKAUF =================
+//Methode um Einhörnern zu verkaufen
     private void verkaufen() {
         if (anzahl(ausgewaehlt) == 0) return;
 
@@ -253,14 +253,14 @@ public class GamePanel extends JPanel {
             ausgewaehlt.next();
         }
 
-        // Coins Change Anzeige
+
         zeigeCoinsChange(verdient);
 
         ausgewaehlt = new List<>();
         updateAnzeige();
     }
 
-    // ================= BEWEGEN =================
+//Methode um Einhorn vom aktuellen Stall zu einem anderen vorhanden Stall zu bewegen
     private void bewegen() {
         if (anzahl(ausgewaehlt) == 0) {
             infoLabel.setText("Wähle mindestens ein Einhorn zum Bewegen");
@@ -327,7 +327,7 @@ public class GamePanel extends JPanel {
         ausgewaehlt = new List<>();
     }
 
-    // ================= SHOP =================
+//Shop um neue Ställe und Einhörner zu kaufen
     private void oeffneShop() {
         JFrame f = new JFrame("Shop");
         f.setSize(300, 350);
@@ -375,7 +375,7 @@ public class GamePanel extends JPanel {
         f.setVisible(true);
     }
 
-    // ================= INVENTAR =================
+//Anzeige/Sammlung aller vorhanden Einhornsorten
     private void zeigeInventar() {
         JFrame f = new JFrame("Figurenhandbuch");
         f.setSize(300, 400);
@@ -419,7 +419,7 @@ public class GamePanel extends JPanel {
         f.setVisible(true);
     }
 
-    // ================= COINS CHANGE =================
+//Veränderung der Coinsanzahl wird gezeigt
     private void zeigeCoinsChange(int betrag) {
         coinsChangeLabel.setText((betrag > 0 ? "+" : "") + betrag);
         coinsChangeLabel.setForeground(betrag >= 0 ? Color.GREEN : Color.RED);
@@ -429,7 +429,7 @@ public class GamePanel extends JPanel {
         t.start();
     }
 
-    // ================= HILFSMETHODEN =================
+//aktuellen Stall eines Einhorns finden
     private Stall findeStallVonEinhorn(Einhorn e) {
         farm.getStaelle().toFirst();
         while (farm.getStaelle().hasAccess()) {
@@ -473,6 +473,8 @@ public class GamePanel extends JPanel {
         }
         return c;
     }
+
+    //Tutorial wird gestartet
     private void starteTutorial() {
         Tutorial tutorial = new Tutorial();
 

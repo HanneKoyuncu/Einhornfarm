@@ -1,6 +1,8 @@
+import java.util.Random;
+
 public enum Attribute {
 
-    // ===== Basisattribute =====
+    // Basisattribute, jedes Attribut hat eine feste Seltenheit
     FEUER(Seltenheit.GEWÖHNLICH),
     WASSER(Seltenheit.GEWÖHNLICH),
     ERDE(Seltenheit.GEWÖHNLICH),
@@ -8,24 +10,21 @@ public enum Attribute {
     LICHT(Seltenheit.GEWÖHNLICH),
     DUNKEL(Seltenheit.GEWÖHNLICH),
 
-    // ===== Fortgeschrittene Attribute =====
-    BLITZ(Seltenheit.SELTEN),      // z.B. FEUER + LUFT
-    LAVA(Seltenheit.SELTEN),       // FEUER + ERDE
-    STAUB(Seltenheit.SELTEN),      // ERDE + LUFT
-    DAMPF(Seltenheit.SELTEN),      // FEUER + WASSER
-    SCHNEE(Seltenheit.SELTEN),     // WASSER + LUFT
-    METALL(Seltenheit.SELTEN),     // ERDE + DUNKEL
+    BLITZ(Seltenheit.SELTEN),      // Feuer+Luft
+    LAVA(Seltenheit.SELTEN),       // Feuer+Erde
+    STAUB(Seltenheit.SELTEN),      // Erde+Luft
+    DAMPF(Seltenheit.SELTEN),      // Feuer+Wasser
+    SCHNEE(Seltenheit.SELTEN),     // Wasser+Luft
+    METALL(Seltenheit.SELTEN),     // Erde+Dunkel
 
-    // ===== Epische Kombinationen =====
-    STURM(Seltenheit.EPISCH),      // BLITZ + LUFT
-    MAGNA(Seltenheit.EPISCH),     // LAVA + FEUER
-    TSUNAMI(Seltenheit.EPISCH),    // WASSER + SCHNEE
-    GEIST(Seltenheit.EPISCH),    // LICHT + DUNKEL
+    STURM(Seltenheit.EPISCH),      // Blitz+Luft
+    MAGNA(Seltenheit.EPISCH),     // Lava+Feuer
+    TSUNAMI(Seltenheit.EPISCH),    // Wasser+Schnee
+    GEIST(Seltenheit.EPISCH),    // Licht+Dunkel
 
-    // ===== Legendäre Kombinationen =====
-    SOLAR(Seltenheit.LEGENDÄR),   // FEUER + LICHT
-    ENERGIE(Seltenheit.LEGENDÄR),   // LAVA + BLITZ
-    TITAN(Seltenheit.LEGENDÄR);  // ERDE + METALL
+    SOLAR(Seltenheit.LEGENDÄR),   // Feuer+Licht
+    ENERGIE(Seltenheit.LEGENDÄR),   // Lava+Blitz
+    TITAN(Seltenheit.LEGENDÄR);  // Erde+Metall
 
     private final Seltenheit seltenheit;
 
@@ -37,14 +36,12 @@ public enum Attribute {
         return seltenheit;
     }
 
-    // ===== 2D-Array für Kombinationen =====
-    private static final Attribute[][] kombinationen;
 
-    static {
+    private static final Attribute[][] kombinationen;
+   //Kombinationen werden festgelegt
+   static {
         int size = Attribute.values().length;
         kombinationen = new Attribute[size][size];
-
-        // Basis-Kombinationen
         setKombination(FEUER, WASSER, DAMPF);
         setKombination(FEUER, ERDE, LAVA);
         setKombination(FEUER, LUFT, BLITZ);
@@ -52,28 +49,32 @@ public enum Attribute {
         setKombination(WASSER, LUFT, SCHNEE);
         setKombination(ERDE, DUNKEL, METALL);
         setKombination(LICHT, DUNKEL, GEIST);
-
-        // Epische Kombinationen
         setKombination(BLITZ, LUFT, STURM);
         setKombination(LAVA, FEUER, MAGNA);
         setKombination(WASSER, SCHNEE, TSUNAMI);
-
-        // Legendäre Kombinationen
         setKombination(FEUER, LICHT,SOLAR);
         setKombination(LAVA, BLITZ,ENERGIE);
         setKombination(ERDE, METALL,TITAN);
-        // UNSTERBLICH bleibt optional, kann bei Bedarf gesetzt werden
-    }
 
+    }
+    //a+b dasselbe wie b+a
     private static void setKombination(Attribute a, Attribute b, Attribute result) {
         kombinationen[a.ordinal()][b.ordinal()] = result;
-        kombinationen[b.ordinal()][a.ordinal()] = result; // symmetrisch
+        kombinationen[b.ordinal()][a.ordinal()] = result;
     }
 
-    // ===== Methode zum Kombinieren =====
+    private static final Random zufall = new Random();
+    // Kombinieren von zwei Attributen, wenn keine Kombination definiert ist oder a!=b ist das resultierende Attribut zufällig
     public static Attribute kombiniere(Attribute a, Attribute b) {
         if (a == b) return a;
+
         Attribute result = kombinationen[a.ordinal()][b.ordinal()];
-        return result != null ? result : a; // Fallback: erstes Attribut
+
+        if (result != null) {
+            return result;
+        } else {
+
+            return zufall.nextBoolean() ? a : b;
+        }
     }
 }

@@ -1,0 +1,26 @@
+flowchart TD
+    A[Start] --> B[Main erstellt JFrame & zeigt StartPanel]
+    B --> C[StartPanel Start-Button gedrückt]
+    C --> D[Farm erstellen]
+    D --> E[GamePanel erstellen und anzeigen]
+    E --> F[Anzeige aktualisieren]
+
+    F --> G{Spieleraktion?}
+    G -->|Shop: Stall kaufen| H[Shop öffnen → Farm.kaufeStall]
+    G -->|Shop: Einhorn kaufen| I[Kaufe Einhorn → Farm.addCoins]
+    G -->|Einhorn auswählen| J[Einhorn auswählen]
+    G -->|Züchten| K[Züchten → Attribute.kombiniere → Stall.einfuegen]
+    G -->|Verkaufen| L[Verkaufen → Stall.entferne → Farm.addCoins]
+    G -->|Bewegen| M[Bewegen → Stall.entferne → Stall.einfuegen]
+    G -->|Inventar anzeigen| N[Inventar anzeigen]
+    G -->|Tutorial starten| O[Tutorial starten → Tutorial.naechsterSchritt]
+    G -->|Beenden| P[Spiel beenden]
+
+    H --> F
+    I --> F
+    J --> F
+    K --> F
+    L --> F
+    M --> F
+    N --> F
+    O --> F

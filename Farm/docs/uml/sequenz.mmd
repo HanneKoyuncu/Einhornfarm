@@ -1,0 +1,53 @@
+sequenceDiagram
+    participant User as Spieler
+    participant Main as Main
+    participant SP as StartPanel
+    participant F as Farm
+    participant GP as GamePanel
+    participant S as Stall
+    participant U as Einhorn
+    participant T as Tutorial
+
+    %% Start des Spiels
+    User->>Main: main()
+    Main->>SP: StartPanel erstellen & anzeigen
+    SP->>User: Menü anzeigen
+    User->>SP: Klick auf Start
+    SP->>F: Farm(farmName) erstellen
+    SP->>GP: GamePanel(farm) erstellen
+    GP->>User: GamePanel anzeigen
+    GP->>GP: updateAnzeige()
+
+    %% Spieleraktionen Loop
+    loop Spieleraktionen
+        User->>GP: Aktion wählen
+        alt Shop: Stall kaufen
+            GP->>F: kaufeStall()
+            F-->>GP: Erfolg/Misserfolg
+        else Shop: Einhorn kaufen
+            GP->>GP: kaufeEinhorn(Attribute)
+            GP->>F: addCoins(-Preis)
+        else Einhorn auswählen
+            GP->>GP: einhornAuswaehlen(Einhorn)
+        else Züchten
+            GP->>GP: zuechten()
+            GP->>U: kombiniere(Attribute)
+            GP->>S: Stall.einfuegen(Einhorn)
+        else Verkaufen
+            GP->>GP: verkaufen()
+            GP->>S: Stall.entferne(Einhorn)
+            GP->>F: addCoins(Wert)
+        else Bewegen
+            GP->>GP: bewegen()
+            GP->>S: Stall.entferne(Einhorn)
+            GP->>S: Stall.einfuegen(Einhorn)
+        else Inventar anzeigen
+            GP->>S: getEinhorner()
+            GP-->>User: Inventar anzeigen
+        else Tutorial starten
+            GP->>T: naechsterSchritt()
+            T-->>GP: Schritttext
+            GP-->>User: Schritt anzeigen
+        end
+        GP->>GP: updateAnzeige()
+    end

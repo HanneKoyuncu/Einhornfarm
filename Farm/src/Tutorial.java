@@ -17,7 +17,7 @@ public class Tutorial {
         schritte.append("Du kannst ausgewählte Einhörner auch verkaufen oder bewegen.");
         schritte.append("Viel Spaß beim Spielen!");
     }
-
+//nächster Schritt wird aufgerufen
     public String naechsterSchritt() {
         if (index < anzahl()) {
             schritte.toFirst();
@@ -28,11 +28,11 @@ public class Tutorial {
         }
         return null;
     }
-
+//prüft ob mehr Schritte vorhanden sind
     public boolean hatMehrSchritte() {
         return index < anzahl();
     }
-
+//Anzahl der Schritte wird zurückgegeben
     private int anzahl() {
         int count = 0;
         schritte.toFirst();
@@ -41,9 +41,5 @@ public class Tutorial {
             schritte.next();
         }
         return count;
-    }
-
-    public void reset() {
-        index = 0;
     }
 }
