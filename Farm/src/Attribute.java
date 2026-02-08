@@ -1,6 +1,6 @@
 public enum Attribute {
 
-    // ===== Basisattribute (Start) =====
+    // ===== Basisattribute =====
     FEUER(Seltenheit.GEWÖHNLICH),
     WASSER(Seltenheit.GEWÖHNLICH),
     ERDE(Seltenheit.GEWÖHNLICH),
@@ -18,15 +18,14 @@ public enum Attribute {
 
     // ===== Epische Kombinationen =====
     STURM(Seltenheit.EPISCH),      // BLITZ + LUFT
-    VULKAN(Seltenheit.EPISCH),     // LAVA + FEUER
+    MAGNA(Seltenheit.EPISCH),     // LAVA + FEUER
     TSUNAMI(Seltenheit.EPISCH),    // WASSER + SCHNEE
-    GEISTER(Seltenheit.EPISCH),    // LICHT + DUNKEL
+    GEIST(Seltenheit.EPISCH),    // LICHT + DUNKEL
 
     // ===== Legendäre Kombinationen =====
-    PHÖNIX(Seltenheit.LEGENDÄR),   // FEUER + LICHT
-    DRACHE(Seltenheit.LEGENDÄR),   // LAVA + BLITZ
-    GIGANT(Seltenheit.LEGENDÄR),   // ERDE + METALL
-    UNSTERBLICH(Seltenheit.LEGENDÄR); // DUNKEL + LICHT
+    SOLAR(Seltenheit.LEGENDÄR),   // FEUER + LICHT
+    ENERGIE(Seltenheit.LEGENDÄR),   // LAVA + BLITZ
+    TITAN(Seltenheit.LEGENDÄR);  // ERDE + METALL
 
     private final Seltenheit seltenheit;
 
@@ -38,32 +37,43 @@ public enum Attribute {
         return seltenheit;
     }
 
-    // ===================== Kombination =====================
+    // ===== 2D-Array für Kombinationen =====
+    private static final Attribute[][] kombinationen;
+
+    static {
+        int size = Attribute.values().length;
+        kombinationen = new Attribute[size][size];
+
+        // Basis-Kombinationen
+        setKombination(FEUER, WASSER, DAMPF);
+        setKombination(FEUER, ERDE, LAVA);
+        setKombination(FEUER, LUFT, BLITZ);
+        setKombination(ERDE, LUFT, STAUB);
+        setKombination(WASSER, LUFT, SCHNEE);
+        setKombination(ERDE, DUNKEL, METALL);
+        setKombination(LICHT, DUNKEL, GEIST);
+
+        // Epische Kombinationen
+        setKombination(BLITZ, LUFT, STURM);
+        setKombination(LAVA, FEUER, MAGNA);
+        setKombination(WASSER, SCHNEE, TSUNAMI);
+
+        // Legendäre Kombinationen
+        setKombination(FEUER, LICHT,SOLAR);
+        setKombination(LAVA, BLITZ,ENERGIE);
+        setKombination(ERDE, METALL,TITAN);
+        // UNSTERBLICH bleibt optional, kann bei Bedarf gesetzt werden
+    }
+
+    private static void setKombination(Attribute a, Attribute b, Attribute result) {
+        kombinationen[a.ordinal()][b.ordinal()] = result;
+        kombinationen[b.ordinal()][a.ordinal()] = result; // symmetrisch
+    }
+
+    // ===== Methode zum Kombinieren =====
     public static Attribute kombiniere(Attribute a, Attribute b) {
-
         if (a == b) return a;
-
-        // Basis-zu-Fortgeschrittene Kombinationen
-        if ((a == FEUER && b == WASSER) || (a == WASSER && b == FEUER)) return DAMPF;
-        if ((a == FEUER && b == ERDE) || (a == ERDE && b == FEUER)) return LAVA;
-        if ((a == FEUER && b == LUFT) || (a == LUFT && b == FEUER)) return BLITZ;
-        if ((a == ERDE && b == LUFT) || (a == LUFT && b == ERDE)) return STAUB;
-        if ((a == WASSER && b == LUFT) || (a == LUFT && b == WASSER)) return SCHNEE;
-        if ((a == ERDE && b == DUNKEL) || (a == DUNKEL && b == ERDE)) return METALL;
-
-        // Fortgeschrittene zu Epische Kombinationen
-        if ((a == BLITZ && b == LUFT) || (a == LUFT && b == BLITZ)) return STURM;
-        if ((a == LAVA && b == FEUER) || (a == FEUER && b == LAVA)) return VULKAN;
-        if ((a == WASSER && b == SCHNEE) || (a == SCHNEE && b == WASSER)) return TSUNAMI;
-        if ((a == LICHT && b == DUNKEL) || (a == DUNKEL && b == LICHT)) return GEISTER;
-
-        // Epische zu Legendäre Kombinationen
-        if ((a == FEUER && b == LICHT) || (a == LICHT && b == FEUER)) return PHÖNIX;
-        if ((a == LAVA && b == BLITZ) || (a == BLITZ && b == LAVA)) return DRACHE;
-        if ((a == ERDE && b == METALL) || (a == METALL && b == ERDE)) return GIGANT;
-        if ((a == DUNKEL && b == LICHT) || (a == LICHT && b == DUNKEL)) return UNSTERBLICH;
-
-        // Fallback: erstes Attribut bleibt
-        return a;
+        Attribute result = kombinationen[a.ordinal()][b.ordinal()];
+        return result != null ? result : a; // Fallback: erstes Attribut
     }
 }
