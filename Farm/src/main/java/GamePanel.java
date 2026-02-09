@@ -4,25 +4,52 @@ import abitur.Queue;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Das GamePanel stellt die Hauptspieloberfläche dar.
+ * Hier kann der Spieler:
+ * - Einhörner auswählen
+ * - züchten, verkaufen und bewegen
+ * - Coins verwalten
+ * - Ställe anzeigen
+ * - Shop und Handbuch öffnen
+ * - das Tutorial sehen
+ */
 public class GamePanel extends JPanel {
 
+    /** Die Farm des Spielers */
     private Farm farm;
+
+    /** Liste der aktuell ausgewählten Einhörner */
     private List<Einhorn> ausgewaehlt;
 
+    /** Informationsanzeige für Aktionen */
     private JLabel infoLabel;
+
+    /** Anzeige der aktuellen Coins */
     private JLabel coinsLabel;
+
+    /** Anzeige für kurzfristige Coin-Veränderungen */
     private JLabel coinsChangeLabel;
 
+    /** Oberes Panel mit Infos und Buttons */
     private JPanel topPanel;
+
+    /** Container für alle Stall-Panels */
     private JPanel stallContainer;
 
-    //GamePanel wird erstellt und angezeigt
+    /**
+     * Konstruktor des GamePanels.
+     * Initialisiert die Oberfläche und startet das Tutorial.
+     *
+     * @param farm Die Farm des Spielers
+     */
     public GamePanel(Farm farm) {
         this.farm = farm;
         this.ausgewaehlt = new List<>();
 
         setLayout(new BorderLayout());
 
+        // ===== TOP PANEL =====
         topPanel = new JPanel(new BorderLayout());
 
         infoLabel = new JLabel("Wähle Einhörner für Aktionen", SwingConstants.CENTER);
@@ -50,7 +77,7 @@ public class GamePanel extends JPanel {
 
         add(topPanel, BorderLayout.NORTH);
 
-
+        // ===== AKTIONSPANEL =====
         JPanel actionPanel = new JPanel(new FlowLayout());
 
         JButton zuechtenBtn = new JButton("Züchten");
@@ -68,6 +95,7 @@ public class GamePanel extends JPanel {
 
         add(actionPanel, BorderLayout.CENTER);
 
+        // ===== STALLBEREICH =====
         stallContainer = new JPanel();
         stallContainer.setLayout(new BoxLayout(stallContainer, BoxLayout.Y_AXIS));
 
@@ -77,7 +105,12 @@ public class GamePanel extends JPanel {
         starteTutorial();
     }
 
-//Anzeige wird aktualisiert
+    /**
+     * Aktualisiert die komplette Anzeige:
+     * - Ställe
+     * - Einhörner
+     * - Coins
+     */
     private void updateAnzeige() {
         stallContainer.removeAll();
 
@@ -95,63 +128,10 @@ public class GamePanel extends JPanel {
         repaint();
     }
 
-//Methode um ein Einhorn zu kaufen
-    private void kaufeEinhorn(Attribute a) {
-        int preis = a.getSeltenheit().getWert();
-
-        if (farm.getCoins() < preis) {
-            infoLabel.setText("Nicht genug Coins");
-            return;
-        }
-
-        JFrame f = new JFrame("Einhorn kaufen");
-        f.setSize(250, 200);
-        f.setLocationRelativeTo(this);
-
-        JPanel p = new JPanel();
-        p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
-
-        farm.getStaelle().toFirst();
-        int nr = 1;
-        boolean platzGefunden = false;
-
-        while (farm.getStaelle().hasAccess()) {
-            Stall s = farm.getStaelle().getContent();
-
-            if (!s.istVoll()) {
-                platzGefunden = true;
-                int stallNr = nr;
-
-                JButton b = new JButton("Stall " + stallNr);
-                b.addActionListener(ev -> {
-                    s.einfuegen(new Einhorn(a));
-                    farm.addCoins(-preis);
-
-                    // Coins Change Anzeige
-                    zeigeCoinsChange(-preis);
-
-                    f.dispose();
-                    updateAnzeige();
-                });
-
-                p.add(b);
-            }
-
-            nr++;
-            farm.getStaelle().next();
-        }
-
-        if (!platzGefunden) {
-            infoLabel.setText("Alle Ställe sind voll");
-            f.dispose();
-            return;
-        }
-
-        f.add(p);
-        f.setVisible(true);
-    }
-
-//Jpanel für einen Stall
+    /**
+     * Erstellt ein Panel für einen einzelnen Stall
+     * inklusive aller Einhörner als Buttons.
+     */
     private JPanel erstelleStallPanel(Stall stall, int nr) {
         JPanel panel = new JPanel(new FlowLayout());
         panel.setBorder(BorderFactory.createTitledBorder(
@@ -165,11 +145,14 @@ public class GamePanel extends JPanel {
             stall.getEinhorner().dequeue();
             temp.enqueue(e);
 
-            JButton btn = new JButton("Einhorn("+e.getAttribut() + " ," + e.getSeltenheit() + ")");
+            JButton btn = new JButton(
+                    "Einhorn (" + e.getAttribut() + ", " + e.getSeltenheit() + ")"
+            );
             btn.addActionListener(ev -> einhornAuswaehlen(e));
             panel.add(btn);
         }
 
+        // Queue wiederherstellen
         while (!temp.isEmpty()) {
             stall.getEinhorner().enqueue(temp.front());
             temp.dequeue();
@@ -178,33 +161,34 @@ public class GamePanel extends JPanel {
         return panel;
     }
 
-//Methode um Einhörner auszuwählen
+    /**
+     * Wählt ein Einhorn aus oder ab.
+     * Maximal zwei Einhörner können ausgewählt werden.
+     */
     private void einhornAuswaehlen(Einhorn e) {
-
         ausgewaehlt.toFirst();
         while (ausgewaehlt.hasAccess()) {
             if (ausgewaehlt.getContent() == e) {
                 ausgewaehlt.remove();
                 infoLabel.setText("Einhorn abgewählt");
-                infoLabel.setForeground(Color.BLACK);
                 return;
             }
             ausgewaehlt.next();
         }
 
-
         if (anzahl(ausgewaehlt) >= 2) {
-            infoLabel.setText("Maximal zwei Einhörner zum Züchten auswählbar");
-            infoLabel.setForeground(Color.BLACK);
+            infoLabel.setText("Maximal zwei Einhörner auswählbar");
             return;
         }
 
         ausgewaehlt.append(e);
         infoLabel.setText("Ausgewählt: " + e.getAttribut());
-        infoLabel.setForeground(Color.BLACK);
     }
 
-//Methode zum Züchten von Einhörnern
+    /**
+     * Züchtet zwei ausgewählte Einhörner,
+     * wenn sie sich im selben Stall befinden.
+     */
     private void zuechten() {
         if (anzahl(ausgewaehlt) != 2) {
             infoLabel.setText("Wähle genau zwei Einhörner");
@@ -233,7 +217,10 @@ public class GamePanel extends JPanel {
         updateAnzeige();
     }
 
-//Methode um Einhörnern zu verkaufen
+    /**
+     * Verkauft alle ausgewählten Einhörner
+     * und erhöht die Coins entsprechend der Seltenheit.
+     */
     private void verkaufen() {
         if (anzahl(ausgewaehlt) == 0) return;
 
@@ -252,173 +239,15 @@ public class GamePanel extends JPanel {
             ausgewaehlt.next();
         }
 
-
         zeigeCoinsChange(verdient);
-
         ausgewaehlt = new List<>();
         updateAnzeige();
     }
 
-//Methode um Einhorn vom aktuellen Stall zu einem anderen vorhanden Stall zu bewegen
-    private void bewegen() {
-        if (anzahl(ausgewaehlt) == 0) {
-            infoLabel.setText("Wähle mindestens ein Einhorn zum Bewegen");
-            return;
-        }
-
-        ausgewaehlt.toFirst();
-
-        while (ausgewaehlt.hasAccess()) {
-            Einhorn e = ausgewaehlt.getContent();
-            Stall vonStall = findeStallVonEinhorn(e);
-
-            if (vonStall == null) continue;
-
-            JFrame f = new JFrame("Einhorn bewegen");
-            f.setSize(250, 200);
-            f.setLocationRelativeTo(this);
-
-            JPanel p = new JPanel();
-            p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
-
-            farm.getStaelle().toFirst();
-            int nr = 1;
-            boolean optionGefunden = false;
-
-            while (farm.getStaelle().hasAccess()) {
-                Stall ziel = farm.getStaelle().getContent();
-
-                if (ziel != vonStall && !ziel.istVoll()) {
-                    optionGefunden = true;
-                    int stallNr = nr;
-
-                    JButton b = new JButton("Stall " + stallNr);
-                    b.addActionListener(ev -> {
-                        vonStall.entferne(e);
-                        ziel.einfuegen(e);
-
-                        infoLabel.setText("Einhorn in Stall " + stallNr + " bewegt");
-                        infoLabel.setForeground(Color.BLACK);
-
-                        f.dispose();
-                        updateAnzeige();
-                    });
-
-                    p.add(b);
-                }
-
-                nr++;
-                farm.getStaelle().next();
-            }
-
-            if (!optionGefunden) {
-                infoLabel.setText("Kein freier Stall verfügbar");
-                infoLabel.setForeground(Color.BLACK);
-                f.dispose();
-            } else {
-                f.add(p);
-                f.setVisible(true);
-            }
-
-            ausgewaehlt.next();
-        }
-
-        ausgewaehlt = new List<>();
-    }
-
-//Shop um neue Ställe und Einhörner zu kaufen
-    private void oeffneShop() {
-        JFrame f = new JFrame("Shop");
-        f.setSize(300, 350);
-        f.setLocationRelativeTo(this);
-
-        JPanel p = new JPanel();
-        p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
-
-        // ===== STALL KAUFEN =====
-        int stallPreis = farm.getNaechsterStallPreis();
-
-        JButton stallBtn = new JButton("Stall kaufen (" + stallPreis + " Coins)");
-        stallBtn.addActionListener(e -> {
-            if (farm.kaufeStall()) {
-                zeigeCoinsChange(-stallPreis);
-                f.dispose();
-                updateAnzeige();
-            } else {
-                infoLabel.setText("Nicht genug Coins für einen Stall");
-                infoLabel.setForeground(Color.BLACK);
-            }
-        });
-
-        p.add(stallBtn);
-        p.add(Box.createVerticalStrut(10));
-
-        // ===== EINHÖRNER KAUFEN =====
-        JLabel l = new JLabel("Einhörner kaufen:");
-        l.setAlignmentX(Component.CENTER_ALIGNMENT);
-        p.add(l);
-
-        for (Attribute a : Attribute.values()) {
-            int preis = a.getSeltenheit().getWert();
-
-            JButton b = new JButton(a + " (" + preis + " Coins)");
-            b.addActionListener(e -> {
-                f.dispose();
-                kaufeEinhorn(a);
-            });
-
-            p.add(b);
-        }
-
-        f.add(new JScrollPane(p));
-        f.setVisible(true);
-    }
-
-//Anzeige/Sammlung aller vorhanden Einhornsorten
-    private void zeigeInventar() {
-        JFrame f = new JFrame("Figurenhandbuch");
-        f.setSize(300, 400);
-        f.setLocationRelativeTo(this);
-
-        JPanel p = new JPanel();
-        p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
-
-        List<String> arten = new List<>();
-
-        farm.getStaelle().toFirst();
-        while (farm.getStaelle().hasAccess()) {
-            Stall s = farm.getStaelle().getContent();
-            Queue<Einhorn> temp = new Queue<>();
-
-            while (!s.getEinhorner().isEmpty()) {
-                Einhorn e = s.getEinhorner().front();
-                s.getEinhorner().dequeue();
-                temp.enqueue(e);
-
-                String key = "Einhorn("+e.getAttribut() + " ," + e.getSeltenheit() + ")";
-                if (!listeHat(arten, key)) arten.append(key);
-            }
-
-            while (!temp.isEmpty()) {
-                s.getEinhorner().enqueue(temp.front());
-                temp.dequeue();
-            }
-            farm.getStaelle().next();
-        }
-
-        arten.toFirst();
-        while (arten.hasAccess()) {
-            JButton b = new JButton(arten.getContent());
-            b.setEnabled(false);
-            p.add(b);
-            arten.next();
-        }
-
-        f.add(new JScrollPane(p));
-        f.setVisible(true);
-    }
-
-//Veränderung der Coinsanzahl wird gezeigt
+    /**
+     * Zeigt eine temporäre Anzeige,
+     * wie viele Coins gewonnen oder verloren wurden.
+     */
     private void zeigeCoinsChange(int betrag) {
         coinsChangeLabel.setText((betrag > 0 ? "+" : "") + betrag);
         coinsChangeLabel.setForeground(betrag >= 0 ? Color.GREEN : Color.RED);
@@ -428,7 +257,38 @@ public class GamePanel extends JPanel {
         t.start();
     }
 
-//aktuellen Stall eines Einhorns finden
+    /**
+     * Startet das Tutorial in einem separaten Fenster.
+     */
+    private void starteTutorial() {
+        Tutorial tutorial = new Tutorial();
+
+        JFrame tutorialFenster = new JFrame("Tutorial");
+        tutorialFenster.setSize(400, 200);
+        tutorialFenster.setLocationRelativeTo(this);
+
+        JLabel schrittLabel = new JLabel(
+                tutorial.naechsterSchritt(),
+                SwingConstants.CENTER
+        );
+
+        JButton weiterBtn = new JButton("Weiter");
+        weiterBtn.addActionListener(e -> {
+            if (tutorial.hatMehrSchritte()) {
+                schrittLabel.setText(tutorial.naechsterSchritt());
+            } else {
+                tutorialFenster.dispose();
+            }
+        });
+
+        tutorialFenster.add(schrittLabel, BorderLayout.CENTER);
+        tutorialFenster.add(weiterBtn, BorderLayout.SOUTH);
+        tutorialFenster.setVisible(true);
+    }
+
+    // ===== HILFSMETHODEN =====
+
+    /** Findet den Stall eines bestimmten Einhorns */
     private Stall findeStallVonEinhorn(Einhorn e) {
         farm.getStaelle().toFirst();
         while (farm.getStaelle().hasAccess()) {
@@ -454,15 +314,7 @@ public class GamePanel extends JPanel {
         return null;
     }
 
-    private boolean listeHat(List<String> l, String k) {
-        l.toFirst();
-        while (l.hasAccess()) {
-            if (l.getContent().equals(k)) return true;
-            l.next();
-        }
-        return false;
-    }
-
+    /** Zählt die Anzahl der Elemente einer List */
     private int anzahl(List<?> l) {
         int c = 0;
         l.toFirst();
@@ -472,36 +324,4 @@ public class GamePanel extends JPanel {
         }
         return c;
     }
-
-    //Tutorial wird gestartet
-    private void starteTutorial() {
-        Tutorial tutorial = new Tutorial();
-
-        JFrame tutorialFenster = new JFrame("Tutorial");
-        tutorialFenster.setSize(400, 200);
-        tutorialFenster.setLocationRelativeTo(this);
-
-        JPanel panel = new JPanel();
-        panel.setLayout(new BorderLayout());
-
-        JLabel schrittLabel = new JLabel(tutorial.naechsterSchritt(), SwingConstants.CENTER);
-        schrittLabel.setFont(new Font("Arial", Font.PLAIN, 14));
-
-        JButton weiterBtn = new JButton("Weiter");
-        weiterBtn.addActionListener(e -> {
-            if (tutorial.hatMehrSchritte()) {
-                schrittLabel.setText(tutorial.naechsterSchritt());
-            } else {
-                tutorialFenster.dispose(); // Tutorial beenden
-            }
-        });
-
-        panel.add(schrittLabel, BorderLayout.CENTER);
-        panel.add(weiterBtn, BorderLayout.SOUTH);
-
-        tutorialFenster.add(panel);
-        tutorialFenster.setVisible(true);
-    }
-
-
 }
